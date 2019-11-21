@@ -1,0 +1,1 @@
+This is a desktop application in Netbeans that implements login logic. Currently, it uses the BCrpyt hashing function to encrypt the user's password before it is stored in a MySQL database. The final implementation will require a second layer of authentication through SMS.
