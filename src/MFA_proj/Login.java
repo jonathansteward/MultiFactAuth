@@ -7,13 +7,19 @@ package MFA_proj;
 import BCrypt.*;
 import java.sql.*;
 import javax.swing.JOptionPane;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
+import java.util.Random;
 
 /**
  *
  * @author jman
  */
 public class Login extends javax.swing.JFrame {
-
+    
+    public static final String ACCOUNT_SID = "";
+    public static final String AUTH_TOKEN = "";
     /**
      * Creates new form Login
      */
@@ -139,19 +145,39 @@ public class Login extends javax.swing.JFrame {
             String databaseURL = "jdbc:mysql://localhost:3306/pw?user=root&password=password&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CST";  
             Connection con=DriverManager.getConnection(databaseURL);  
             Statement stmt=con.createStatement();
-            ResultSet rs = stmt.executeQuery("Select pw from Users where username='" + uname.getText() + "'");
+            ResultSet rs = stmt.executeQuery("Select pw, phone from Users where username='" + uname.getText() + "'");
             if(rs.next() == false){
                 //username does not exist, please consider creating a new user (MessageBox)
                 JOptionPane.showMessageDialog(null, 
                               "Username does not exist. Please consider creating a new user.", 
                               "User Not Found", 
                               JOptionPane.PLAIN_MESSAGE);
+                uname.setText("");
+                passw.setText("");
             }else{
                 if (BCrypt.checkpw(passw.getText(), rs.getString("pw"))){
-                    JOptionPane.showMessageDialog(null, 
+                    //Generate random 6 digit number code in variable string, send to phone number listed in DB for user,
+                    // user enters that in box and if it matches current string variable then return success message
+                    Random rnd = new Random();
+                    int code = 100000 + rnd.nextInt(999999);
+                    
+                    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+                    Message message = Message.creator(new PhoneNumber(rs.getString("phone")), new PhoneNumber("+16152839288"),
+                        String.valueOf(code)).create();
+                    
+                    String verify= JOptionPane.showInputDialog("Enter verification code from text");
+                    
+                    if(Integer.parseInt(verify) == code){
+                        JOptionPane.showMessageDialog(null, 
                               "Login Successful", 
                               "Success", 
                               JOptionPane.PLAIN_MESSAGE);
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Verification code is incorrect", "Failed Login", 
+                                JOptionPane.PLAIN_MESSAGE);
+                    }
+                    
                     uname.setText("");
                     passw.setText("");
                 }else{
@@ -159,7 +185,7 @@ public class Login extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, 
                               "Username or Password is incorrect", 
                               "Failed Login", 
-                              JOptionPane.PLAIN_MESSAGE);//MessageBox
+                              JOptionPane.PLAIN_MESSAGE);
                     uname.setText("");
                     passw.setText("");
                 }

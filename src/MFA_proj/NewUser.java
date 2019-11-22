@@ -143,8 +143,8 @@ public class NewUser extends javax.swing.JFrame {
                 //messagebox username exists
                 //Take to login page
                 JOptionPane.showMessageDialog(null, 
-                              "User successfully saved.", 
-                              "New User", 
+                              "Username already exists.", 
+                              "Existing User", 
                               JOptionPane.PLAIN_MESSAGE);
                 dispose();
                 new Login().setVisible(true);
