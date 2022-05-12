@@ -18,6 +18,7 @@ import java.util.Random;
  */
 public class Login extends javax.swing.JFrame {
     
+    // Auth tokens will not be stored in code in later version
     public static final String ACCOUNT_SID = "";
     public static final String AUTH_TOKEN = "";
     /**
@@ -142,10 +143,13 @@ public class Login extends javax.swing.JFrame {
         //If password is true for username then authenticate through phone(twilio) and then return success message
         // else dialog popup saying login failed
         try{
-            String databaseURL = "jdbc:mysql://localhost:3306/pw?user=root&password=password&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CST";  
+            // Full password string will be stored in secure file and not directly in code in later release
+            String databaseURL = "jdbc:mysql://";  
             Connection con=DriverManager.getConnection(databaseURL);  
-            Statement stmt=con.createStatement();
-            ResultSet rs = stmt.executeQuery("Select pw, phone from Users where username='" + uname.getText() + "'");
+            PreparedStatement stmt=con.prepareStatement("Select pw, phone from Users where username = ?");
+            stmt.setString(1, uname.getText());
+            ResultSet rs = stmt.executeQuery();
+            
             if(rs.next() == false){
                 //username does not exist, please consider creating a new user (MessageBox)
                 JOptionPane.showMessageDialog(null, 
