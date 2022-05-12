@@ -135,10 +135,11 @@ public class NewUser extends javax.swing.JFrame {
         // TODO add your handling code here:
         //does username exist in db? If yes, then take to login page
         try{
-            String databaseURL = "jdbc:mysql://localhost:3306/pw?user=root&password=password&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CST"; 
+            String databaseURL = "jdbc:mysql://";
             Connection con=DriverManager.getConnection(databaseURL);  
-            Statement stmt=con.createStatement();
-            ResultSet rs = stmt.executeQuery("Select * from Users where username='" + username.getText() + "'");
+            PreparedStatement stmt=con.prepareStatement("Select * from Users where username = ?");
+            stmt.setString(1, username.getText());
+            ResultSet rs = stmt.executeQuery();
             if(rs.next() == true){
                 //messagebox username exists
                 //Take to login page
@@ -151,7 +152,11 @@ public class NewUser extends javax.swing.JFrame {
             }else{
                 //Need to run jBCrypt function/algorithm on password.getText()
                 String hashed = BCrypt.hashpw(password.getText(), BCrypt.gensalt());
-                stmt.executeUpdate("INSERT INTO Users (username,pw,phone) VALUES ('" + username.getText() + "','" + hashed + "','" + phone.getText() + "');");
+                stmt = con.prepareStatement("INSERT INTO Users (username,pw,phone) VALUES (?,?,?");"
+                stmt.setString(1, username.getText());
+                stmt.setString(2, hashed);
+                stmt.setString(3, phone.getText());
+                stmt.executeUpdate();
                 
                 JOptionPane.showMessageDialog(null, 
                               "User successfully saved.", 
