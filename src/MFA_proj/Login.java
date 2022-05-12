@@ -14,7 +14,7 @@ import java.util.Random;
 
 /**
  *
- * @author jman
+ * @author jon
  */
 public class Login extends javax.swing.JFrame {
     
@@ -142,10 +142,12 @@ public class Login extends javax.swing.JFrame {
         //If password is true for username then authenticate through phone(twilio) and then return success message
         // else dialog popup saying login failed
         try{
-            String databaseURL = "jdbc:mysql://localhost:3306/pw?user=root&password=password&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CST";  
+            String databaseURL = "jdbc:mysql://";  
             Connection con=DriverManager.getConnection(databaseURL);  
-            Statement stmt=con.createStatement();
-            ResultSet rs = stmt.executeQuery("Select pw, phone from Users where username='" + uname.getText() + "'");
+            PreparedStatement stmt=con.prepareStatement("Select pw, phone from Users where username = ?");
+            stmt.setString(1, uname.getText());
+
+            ResultSet rs = stmt.executeQuery();
             if(rs.next() == false){
                 //username does not exist, please consider creating a new user (MessageBox)
                 JOptionPane.showMessageDialog(null, 
@@ -163,7 +165,7 @@ public class Login extends javax.swing.JFrame {
                     
                     Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
-                    Message message = Message.creator(new PhoneNumber(rs.getString("phone")), new PhoneNumber("+16152839288"),
+                    Message message = Message.creator(new PhoneNumber(rs.getString("phone")), new PhoneNumber(""),
                         String.valueOf(code)).create();
                     
                     String verify= JOptionPane.showInputDialog("Enter verification code from text");

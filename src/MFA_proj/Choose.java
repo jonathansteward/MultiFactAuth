@@ -6,7 +6,7 @@
 package MFA_proj;
 /**
  *
- * @author jman
+ * @author jon
  */
 public class Choose extends javax.swing.JFrame {
 

@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author jman
+ * @author jon
  */
 public class NewUser extends javax.swing.JFrame {
 
