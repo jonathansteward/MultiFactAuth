@@ -143,21 +143,13 @@ public class Login extends javax.swing.JFrame {
         //If password is true for username then authenticate through phone(twilio) and then return success message
         // else dialog popup saying login failed
         try{
-<<<<<<< HEAD
-=======
             // Full password string will be stored in secure file and not directly in code in later release
->>>>>>> eaaacc0c7f93e3383a4879948e52cd177a0630c0
             String databaseURL = "jdbc:mysql://";  
             Connection con=DriverManager.getConnection(databaseURL);  
             PreparedStatement stmt=con.prepareStatement("Select pw, phone from Users where username = ?");
             stmt.setString(1, uname.getText());
-<<<<<<< HEAD
-
-            ResultSet rs = stmt.executeQuery();
-=======
             ResultSet rs = stmt.executeQuery();
             
->>>>>>> eaaacc0c7f93e3383a4879948e52cd177a0630c0
             if(rs.next() == false){
                 //username does not exist, please consider creating a new user (MessageBox)
                 JOptionPane.showMessageDialog(null, 

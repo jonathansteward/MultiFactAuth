@@ -6,6 +6,7 @@
 package MFA_proj;
 import java.sql.*;
 import BCrypt.*;
+import java.awt.HeadlessException;
 import javax.swing.JOptionPane;
 
 /**
@@ -137,7 +138,8 @@ public class NewUser extends javax.swing.JFrame {
         try{
             String databaseURL = "jdbc:mysql://";
             Connection con=DriverManager.getConnection(databaseURL);  
-            PreparedStatement stmt=con.prepareStatement("Select * from Users where username = ?");
+            PreparedStatement stmt=con.prepareStatement("Select * from Users "
+                    + "where username = ?");
             stmt.setString(1, username.getText());
             ResultSet rs = stmt.executeQuery();
             if(rs.next() == true){
@@ -152,7 +154,7 @@ public class NewUser extends javax.swing.JFrame {
             }else{
                 //Need to run jBCrypt function/algorithm on password.getText()
                 String hashed = BCrypt.hashpw(password.getText(), BCrypt.gensalt());
-                stmt = con.prepareStatement("INSERT INTO Users (username,pw,phone) VALUES (?,?,?");"
+                stmt = con.prepareStatement("INSERT INTO Users (username,pw,phone) VALUES (?,?,?)");
                 stmt.setString(1, username.getText());
                 stmt.setString(2, hashed);
                 stmt.setString(3, phone.getText());
@@ -166,7 +168,7 @@ public class NewUser extends javax.swing.JFrame {
                 new Login().setVisible(true);
                 con.close();
             }
-        } catch(Exception e){
+        } catch(HeadlessException | SQLException e){
             System.out.println(e);
         }
     }//GEN-LAST:event_saveButtonActionPerformed
@@ -199,10 +201,8 @@ public class NewUser extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new NewUser().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new NewUser().setVisible(true);
         });
     }
 
