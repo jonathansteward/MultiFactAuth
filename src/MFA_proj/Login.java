@@ -140,7 +140,7 @@ public class Login extends javax.swing.JFrame {
         String[] dbProperties = gp.getPropValues(0);
         String[] twilioProperties = gp.getPropValues(1);
 
-        if ((dbProperties != null) && (twilioProperties != null)) {
+        if (dbProperties != null) {
             try {
                 // Attempting to connect to database
                 Connection con = DriverManager.getConnection(dbProperties[0], dbProperties[1], dbProperties[2]);
